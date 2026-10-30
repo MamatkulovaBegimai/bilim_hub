@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}{{ page_title }} | BilimHub{% endblock %}
+{% block content %}
+<div class="form-panel manager-form-panel">
+  <a class="back-link" href="{% if student and student.study_group %}{% url 'group_detail' student.study_group.pk %}{% else %}{% url 'student_list' %}{% endif %}">← Артка кайтуу</a>
+  <span class="eyebrow">СТУДЕНТТИН МААЛЫМАТЫ</span><h1>{{ page_title }}</h1>
+  <p>Студенттин байланыш маалыматтарын киргизип, окуу тобун тандаңыз. Бир студент бир учурда бир топко бекитилет.</p>
+  <form method="post" class="data-form">{% csrf_token %}
+    {% for field in form %}
+      <p><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% for error in field.errors %}<small class="field-error">{{ error }}</small>{% endfor %}</p>
+    {% endfor %}
+    {% for error in form.non_field_errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+    <button class="btn" type="submit">Сактоо</button>
+  </form>
+</div>
+{% endblock %}
