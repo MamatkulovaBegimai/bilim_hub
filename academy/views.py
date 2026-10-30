@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
+from django.db import transaction
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
@@ -80,6 +81,45 @@ def application_update(request, pk):
     obj.save(update_fields=['status', 'manager_note'])
     messages.success(request, 'Арыз жаңыртылды.')
     return redirect('application_list')
+
+
+@staff_member_required
+@require_POST
+def application_to_student(request, pk):
+    with transaction.atomic():
+        application = get_object_or_404(
+            Application.objects.select_for_update().select_related('course', 'student'),
+            pk=pk,
+        )
+        if application.student_id:
+            messages.info(request, 'Бул арыздан студент мурда эле катталган.')
+            return redirect('application_list')
+        if application.status != Application.Status.ACCEPTED:
+            messages.error(request, 'Студент каттоо үчүн арыздын статусу «Кабыл алынды» болушу керек.')
+            return redirect('application_list')
+
+        group_id = request.POST.get('study_group', '').strip()
+        study_group = None
+        if group_id:
+            study_group = get_object_or_404(
+                StudyGroup,
+                pk=group_id,
+                course=application.course,
+                is_active=True,
+            )
+
+        student = Student.objects.create(
+            full_name=application.full_name,
+            phone=application.phone,
+            email=application.email,
+            study_group=study_group,
+        )
+        application.student = student
+        application.save(update_fields=['student'])
+    messages.success(request, f'«{student.full_name}» студенттер базасына катталды.')
+    if student.study_group_id:
+        return redirect('group_detail', pk=student.study_group_id)
+    return redirect('student_list')
 
 
 @staff_member_required
