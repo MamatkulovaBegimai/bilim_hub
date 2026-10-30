@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Окуу топтору | BilimHub{% endblock %}
+{% block content %}
+<section class="page-heading manager-heading"><div><span class="eyebrow">ОКУУ ПРОЦЕССИ</span><h1>Окуу топтору</h1><p>Курстар боюнча топторду түзүп, студенттерди башкаруу.</p></div><a class="btn" href="{% url 'group_create' %}">＋ Жаңы топ түзүү</a></section>
+<form method="get" class="filter-form"><input name="q" value="{{ q }}" placeholder="Топтун же курстун аталышы"><select name="status"><option value="">Бардык топтор</option><option value="active" {% if status == 'active' %}selected{% endif %}>Активдүү</option><option value="inactive" {% if status == 'inactive' %}selected{% endif %}>Активдүү эмес</option></select><button class="btn btn-small">Издөө</button></form>
+<div class="group-grid">
+{% for group in groups %}
+  <article class="group-card">
+    <div class="group-card-top"><span class="group-mini-course">{{ group.course.title }}</span><span class="status-pill {% if group.is_active %}status-active{% else %}status-inactive{% endif %}">{% if group.is_active %}Активдүү{% else %}Жабык{% endif %}</span></div>
+    <h2>{{ group.name }}</h2>
+    <div class="group-card-meta"><span>👥 {{ group.students.count }} студент</span><span>📅 {% if group.start_date %}{{ group.start_date|date:'d.m.Y' }}{% else %}Дата көрсөтүлгөн эмес{% endif %}</span></div>
+    <div class="group-card-bottom"><a class="text-link" href="{% url 'group_detail' group.pk %}">Студенттерди көрүү →</a><a class="edit-link" href="{% url 'group_update' group.pk %}">Өзгөртүү</a></div>
+  </article>
+{% empty %}<div class="empty wide">Азырынча топ түзүлгөн жок. «Жаңы топ түзүү» баскычын басыңыз.</div>{% endfor %}
+</div>
+{% endblock %}
