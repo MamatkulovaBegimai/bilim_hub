@@ -1,1 +1,39 @@
-{% extends 'base.html' %}{% block title %}Башкаруу панели | BilimHub{% endblock %}{% block content %}<section class="page-heading"><span class="eyebrow">МЕНЕДЖЕР ҮЧҮН</span><h1>Башкаруу панели</h1><p>Билим берүү борборунун негизги көрсөткүчтөрү.</p></section><div class="stats-grid"><div class="stat"><small>Жаңы арыздар</small><strong>{{ new_applications }}</strong></div><div class="stat"><small>Бардык арыздар</small><strong>{{ applications_count }}</strong></div><div class="stat"><small>Студенттер</small><strong>{{ students_count }}</strong></div><div class="stat"><small>Окуу топтору</small><strong>{{ groups_count }}</strong></div></div><div class="section-head"><h2>Акыркы арыздар</h2><a class="text-link" href="{% url 'application_list' %}">Бардыгын көрүү →</a></div><div class="table-wrap"><table><thead><tr><th>Аты-жөнү</th><th>Курс</th><th>Телефон</th><th>Статус</th><th>Дата</th></tr></thead><tbody>{% for a in recent_applications %}<tr><td>{{ a.full_name }}</td><td>{{ a.course.title }}</td><td>{{ a.phone }}</td><td>{{ a.get_status_display }}</td><td>{{ a.created_at|date:'d.m.Y' }}</td></tr>{% empty %}<tr><td colspan="5">Арыздар азырынча жок.</td></tr>{% endfor %}</tbody></table></div>{% endblock %}
+{% extends 'base.html' %}
+{% block title %}Башкаруу панели | BilimHub{% endblock %}
+{% block content %}
+<section class="page-heading">
+  <span class="eyebrow">МЕНЕДЖЕР ҮЧҮН</span>
+  <h1>Башкаруу панели</h1>
+  <p>Билим берүү борборунун негизги көрсөткүчтөрү.</p>
+</section>
+
+<div class="stats-grid">
+  <a class="stat stat-link" href="{% url 'application_list' %}"><small>Жаңы арыздар</small><strong>{{ new_applications }}</strong><span>Арыздарды көрүү →</span></a>
+  <a class="stat stat-link" href="{% url 'application_list' %}"><small>Бардык арыздар</small><strong>{{ applications_count }}</strong><span>Тизмени ачуу →</span></a>
+  <a class="stat stat-link" href="{% url 'student_list' %}"><small>Студенттер</small><strong>{{ students_count }}</strong><span>Студенттерди башкаруу →</span></a>
+  <a class="stat stat-link" href="{% url 'group_list' %}"><small>Окуу топтору</small><strong>{{ groups_count }}</strong><span>Топторду башкаруу →</span></a>
+</div>
+
+<div class="manager-actions">
+  <a class="manager-action" href="{% url 'group_create' %}"><span class="action-icon">＋</span><span><strong>Жаңы топ түзүү</strong><small>Курс тандап, окуу тобун ачуу</small></span><b>→</b></a>
+  <a class="manager-action" href="{% url 'student_create' %}"><span class="action-icon action-icon-purple">＋</span><span><strong>Студент кошуу</strong><small>Студентти базага каттоо жана топко бекитүү</small></span><b>→</b></a>
+</div>
+
+<div class="section-head"><h2>Окуу топтору</h2><a class="text-link" href="{% url 'group_list' %}">Бардык топтор →</a></div>
+<div class="group-mini-grid">
+  {% for group in active_groups %}
+    <a class="group-mini-card" href="{% url 'group_detail' group.pk %}">
+      <span class="group-mini-course">{{ group.course.title }}</span>
+      <strong>{{ group.name }}</strong>
+      <small>{{ group.students.count }} студент</small>
+    </a>
+  {% empty %}
+    <div class="empty">Азырынча активдүү топтор жок. Биринчи топту түзүңүз.</div>
+  {% endfor %}
+</div>
+
+<div class="section-head"><h2>Акыркы арыздар</h2><a class="text-link" href="{% url 'application_list' %}">Бардыгын көрүү →</a></div>
+<div class="table-wrap"><table><thead><tr><th>Аты-жөнү</th><th>Курс</th><th>Телефон</th><th>Статус</th><th>Дата</th></tr></thead><tbody>
+{% for a in recent_applications %}<tr><td>{{ a.full_name }}</td><td>{{ a.course.title }}</td><td>{{ a.phone }}</td><td>{{ a.get_status_display }}</td><td>{{ a.created_at|date:'d.m.Y' }}</td></tr>{% empty %}<tr><td colspan="5">Арыздар азырынча жок.</td></tr>{% endfor %}
+</tbody></table></div>
+{% endblock %}
