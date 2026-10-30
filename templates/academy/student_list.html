@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}Студенттер | BilimHub{% endblock %}
+{% block content %}
+<section class="page-heading manager-heading"><div><span class="eyebrow">ОКУУ ПРОЦЕССИ</span><h1>Студенттер</h1><p>Студенттердин маалыматын жана окуу топторун башкаруу.</p></div><a class="btn" href="{% url 'student_create' %}">＋ Студент кошуу</a></section>
+<form method="get" class="filter-form"><input name="q" value="{{ q }}" placeholder="Аты-жөнү, телефон же email"><select name="group"><option value="">Бардык топтор</option><option value="none" {% if selected_group == 'none' %}selected{% endif %}>Топко бекитилген эмес</option>{% for group in groups %}<option value="{{ group.pk }}" {% if selected_group == group.pk|stringformat:'s' %}selected{% endif %}>{{ group.name }}</option>{% endfor %}</select><button class="btn btn-small">Издөө</button></form>
+<div class="table-wrap"><table><thead><tr><th>Аты-жөнү</th><th>Телефон</th><th>Email</th><th>Окуу тобу</th><th>Катталган күнү</th><th>Аракет</th></tr></thead><tbody>
+{% for student in students %}<tr><td><strong>{{ student.full_name }}</strong><small class="cell-small">{% if student.is_active %}Активдүү{% else %}Окуусу токтотулган{% endif %}</small></td><td>{{ student.phone }}</td><td>{{ student.email|default:'—' }}</td><td>{% if student.study_group %}<a class="text-link" href="{% url 'group_detail' student.study_group.pk %}">{{ student.study_group.name }}</a>{% else %}<span class="muted-text">Топ тандалган эмес</span>{% endif %}</td><td>{{ student.enrolled_at|date:'d.m.Y' }}</td><td><div class="row-actions"><a class="edit-link" href="{% url 'student_update' student.pk %}">Өзгөртүү</a><form method="post" action="{% url 'student_delete' student.pk %}" onsubmit="return confirm('Студентти өчүрүүгө ишенесизби?');">{% csrf_token %}<button class="table-action danger-action" type="submit">Өчүрүү</button></form></div></td></tr>
+{% empty %}<tr><td colspan="6" class="table-empty">Студенттер табылган жок.</td></tr>{% endfor %}
+</tbody></table></div>
+{% endblock %}
