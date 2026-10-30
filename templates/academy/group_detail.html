@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}{{ group.name }} | BilimHub{% endblock %}
+{% block content %}
+<a class="back-link" href="{% url 'group_list' %}">← Бардык топтор</a>
+<section class="page-heading manager-heading"><div><span class="eyebrow">{{ group.course.title }}</span><h1>{{ group.name }}</h1><p>{% if group.start_date %}Башталган күнү: {{ group.start_date|date:'d.m.Y' }}{% endif %}{% if group.end_date %} · Аяктоо: {{ group.end_date|date:'d.m.Y' }}{% endif %}</p></div><a class="btn" href="{% url 'group_update' group.pk %}">Топту өзгөртүү</a></section>
+<div class="group-detail-summary"><div><small>Студенттердин саны</small><strong>{{ students_count }}</strong></div><div><small>Статусу</small><strong class="summary-status">{% if group.is_active %}Активдүү{% else %}Жабык{% endif %}</strong></div><div><small>Курс</small><strong class="summary-course">{{ group.course.title }}</strong></div></div>
+<div class="section-head"><h2>Топтогу студенттер</h2><a class="btn btn-small" href="{% url 'student_create' %}?group={{ group.pk }}">＋ Студент кошуу</a></div>
+<div class="table-wrap"><table><thead><tr><th>Аты-жөнү</th><th>Телефон</th><th>Email</th><th>Катталган күнү</th><th>Статус</th><th>Аракет</th></tr></thead><tbody>
+{% for student in students %}<tr><td><strong>{{ student.full_name }}</strong></td><td>{{ student.phone }}</td><td>{{ student.email|default:'—' }}</td><td>{{ student.enrolled_at|date:'d.m.Y' }}</td><td>{% if student.is_active %}Окуп жатат{% else %}Токтотулган{% endif %}</td><td><div class="row-actions"><a class="edit-link" href="{% url 'student_update' student.pk %}">Өзгөртүү</a><form method="post" action="{% url 'student_remove_from_group' student.pk %}">{% csrf_token %}<button class="table-action" type="submit">Топтон чыгаруу</button></form></div></td></tr>
+{% empty %}<tr><td colspan="6" class="table-empty">Бул топко азырынча студент кошулган жок.</td></tr>{% endfor %}
+</tbody></table></div>
+{% endblock %}
