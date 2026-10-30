@@ -1,1 +1,29 @@
-{% load static %}<!doctype html><html lang="ky"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>{% block title %}BilimHub{% endblock %}</title><link rel="stylesheet" href="{% static 'css/style.css' %}"></head><body><header class="site-header"><div class="container nav"><a class="brand" href="{% url 'home' %}"><span class="brand-mark">Б</span>Bilim<span class="brand-accent">Hub</span></a><nav><a href="{% url 'course_list' %}">Курстар</a>{% if request.user.is_staff %}<a href="{% url 'dashboard' %}">Башкаруу панели</a>{% endif %}{% if request.user.is_authenticated %}<form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="nav-button">Чыгуу</button></form>{% else %}<a href="{% url 'login' %}">Кирүү</a>{% endif %}</nav></div></header><main class="container main">{% if messages %}{% for message in messages %}<div class="message">{{ message }}</div>{% endfor %}{% endif %}{% block content %}{% endblock %}</main><footer><div class="container">© {% now "Y" %} BilimHub · Окууну бүгүн баштаңыз</div></footer><script src="{% static 'js/main.js' %}"></script></body></html>
+{% load static %}<!doctype html>
+<html lang="ky">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}BilimHub{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+<header class="site-header"><div class="container nav">
+  <a class="brand" href="{% url 'home' %}"><span class="brand-mark">Б</span>Bilim<span class="brand-accent">Hub</span></a>
+  <nav>
+    <a href="{% url 'course_list' %}">Курстар</a>
+    {% if request.user.is_staff %}
+      <a href="{% url 'dashboard' %}">Башкаруу панели</a>
+      <a href="{% url 'group_list' %}">Группалар</a>
+      <a href="{% url 'student_list' %}">Студенттер</a>
+    {% endif %}
+    {% if request.user.is_authenticated %}
+      <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="nav-button">Чыгуу</button></form>
+    {% else %}<a href="{% url 'login' %}">Кирүү</a>{% endif %}
+  </nav>
+</div></header>
+<main class="container main">
+  {% if messages %}{% for message in messages %}<div class="message">{{ message }}</div>{% endfor %}{% endif %}
+  {% block content %}{% endblock %}
+</main>
+<footer><div class="container">© {% now "Y" %} BilimHub · Окууну бүгүн баштаңыз</div></footer>
+<script src="{% static 'js/main.js' %}"></script>
+</body></html>
